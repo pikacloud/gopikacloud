@@ -9,6 +9,10 @@ type Zone struct {
 	Serial     int    `json:"serial,omitempty"`
 }
 
+type ZoneWrapper struct {
+	Zone []Zone
+}
+
 func zoneIdentifier(value interface{}) string {
 	switch value := value.(type) {
 	case int:
@@ -26,7 +30,7 @@ func zonePath(zone interface{}) string {
 	return "zones/"
 }
 
-func (client *gopikacloudClient) Zones() ([]Zone, error) {
+func (client *Client) Zones() ([]Zone, error) {
 	zones := []Zone{}
 	if err := client.get(zonePath(nil), &zones); err != nil {
 		return []Zone{}, err
@@ -34,10 +38,10 @@ func (client *gopikacloudClient) Zones() ([]Zone, error) {
 	return zones, nil
 }
 
-func (client *gopikacloudClient) Zone(zone interface{}) (Zone, error) {
-	_zone := Zone{}
-	if err := client.get(zonePath(zone), _zone); err != nil {
-		return Zone{}, err
+func (client *Client) Zone(zone interface{}) ([]Zone, error) {
+	zones := []Zone{}
+	if err := client.get(zonePath(zone), &zones); err != nil {
+		return []Zone{}, err
 	}
-	return _zone, nil
+	return zones, nil
 }

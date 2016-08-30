@@ -12,7 +12,7 @@ import (
 
 var (
 	mux    *http.ServeMux
-	client *gopikacloudClient
+	client *Client
 	server *httptest.Server
 )
 

@@ -13,17 +13,22 @@ const (
 	apiVersion     = "v1"
 )
 
-type gopikacloudClient struct {
-	APIToken   string
+// Client manages communication with Pikacloud API.
+type Client struct {
+	// API Token for authenticating
+	APIToken string
+	// HTTP client used to communicate with the Pikacloud API.
 	HTTPClient *http.Client
-	BaseURL    string
+	// Base URL for API requests.
+	BaseURL string
 }
 
-func NewClient(apiToken string) *gopikacloudClient {
-	return &gopikacloudClient{APIToken: apiToken, HTTPClient: &http.Client{}, BaseURL: defaultBaseURL}
+// NewClient users
+func NewClient(apiToken string) *Client {
+	return &Client{APIToken: apiToken, HTTPClient: &http.Client{}, BaseURL: defaultBaseURL}
 }
 
-func (client *gopikacloudClient) makeRequest(method, path string, body io.Reader) (*http.Request, error) {
+func (client *Client) makeRequest(method, path string, body io.Reader) (*http.Request, error) {
 	url := client.BaseURL + fmt.Sprintf("%s/%s", apiVersion, path)
 	req, err := http.NewRequest(method, url, body)
 	req.Header.Add("Authorization: Token", fmt.Sprintf("%s", client.APIToken))
@@ -35,7 +40,7 @@ func (client *gopikacloudClient) makeRequest(method, path string, body io.Reader
 	return req, nil
 }
 
-func (client *gopikacloudClient) get(path string, val interface{}) error {
+func (client *Client) get(path string, val interface{}) error {
 	body, _, err := client.sendRequest("GET", path, nil)
 	if err != nil {
 		return err
@@ -48,7 +53,7 @@ func (client *gopikacloudClient) get(path string, val interface{}) error {
 	return nil
 }
 
-func (client *gopikacloudClient) sendRequest(method, path string, body io.Reader) (string, int, error) {
+func (client *Client) sendRequest(method, path string, body io.Reader) (string, int, error) {
 	req, err := client.makeRequest(method, path, body)
 	if err != nil {
 		return "", 0, err
