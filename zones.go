@@ -60,7 +60,6 @@ func (zone *Zone) Delete(client *Client) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(status)
 	if status == 204 {
 		return nil
 	}
