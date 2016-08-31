@@ -53,6 +53,14 @@ func (client *Client) get(path string, val interface{}) error {
 	return nil
 }
 
+func (client *Client) delete(path string, val interface{}) error {
+	_, _, err := client.sendRequest("DELETE", path, nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (client *Client) sendRequest(method, path string, body io.Reader) (string, int, error) {
 	req, err := client.makeRequest(method, path, body)
 	if err != nil {

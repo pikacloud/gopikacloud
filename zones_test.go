@@ -66,3 +66,20 @@ func TestZone_Zone(t *testing.T) {
 		t.Errorf("Zone returned %+v, want %+v", zone, want)
 	}
 }
+
+func TestZone_Delete(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/v1/zones/42/", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, "DELETE")
+		w.WriteHeader(http.StatusNoContent)
+	})
+
+	zone := Zone{ID: 42, DomainName: "example.com"}
+	err := zone.Delete(client)
+
+	if err != nil {
+		t.Errorf("Delete returned error: %v", err)
+	}
+}
