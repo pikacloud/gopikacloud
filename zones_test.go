@@ -76,7 +76,7 @@ func TestZone_Delete(t *testing.T) {
 		w.WriteHeader(http.StatusNoContent)
 	})
 
-	zone := Zone{ID: 42, DomainName: "example.com"}
+	zone := Zone{ID: 42}
 	err := zone.Delete(client)
 
 	if err != nil {
