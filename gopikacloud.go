@@ -31,7 +31,7 @@ func NewClient(apiToken string) *Client {
 func (client *Client) makeRequest(method, path string, body io.Reader) (*http.Request, error) {
 	url := client.BaseURL + fmt.Sprintf("%s/%s", apiVersion, path)
 	req, err := http.NewRequest(method, url, body)
-	req.Header.Add("Authorization: Token", fmt.Sprintf("%s", client.APIToken))
+	req.Header.Add("Authorization", fmt.Sprintf("Token: %s", client.APIToken))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Add("Accept", "application/json")
 	if err != nil {
