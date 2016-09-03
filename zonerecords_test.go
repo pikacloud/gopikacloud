@@ -1,6 +1,11 @@
 package gopikacloud
 
-import "testing"
+import (
+	"fmt"
+	"net/http"
+	"reflect"
+	"testing"
+)
 
 func TestZoneRecord_zonerecordPath(t *testing.T) {
 	var pathTests = []struct {
@@ -22,27 +27,27 @@ func TestZoneRecord_zonerecordPath(t *testing.T) {
 	}
 }
 
-// func TestZone_Zones(t *testing.T) {
-// 	setup()
-// 	defer teardown()
-//
-// 	mux.HandleFunc("/v1/zones/", func(w http.ResponseWriter, r *http.Request) {
-// 		testMethod(t, r, "GET")
-// 		fmt.Fprint(w, `[{"id": 1, "domain_name": "foo.com", "serial": 10, "created_at": "2016-08-23T21:59:14.000251Z"}]`)
-// 	})
-//
-// 	zones, err := client.Zones()
-//
-// 	if err != nil {
-// 		t.Errorf("Zones returned error: %v", err)
-// 	}
-//
-// 	want := []Zone{{ID: 1, DomainName: "foo.com", Serial: 10, CreatedAt: "2016-08-23T21:59:14.000251Z"}}
-// 	if !reflect.DeepEqual(zones, want) {
-// 		t.Errorf("Zones returned %+v, want %+v", zones, want)
-// 	}
-// }
-//
+func TestZoneRecord_ZoneRecords(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/v1/zones/13/records/", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, "GET")
+		fmt.Fprint(w, `[{"id": 42, "zone": 13, "rtype": "A", "ipv4": "127.0.0.1", "ttl": 1800}]`)
+	})
+
+	zoneRecords, err := client.ZoneRecords(13)
+
+	if err != nil {
+		t.Errorf("Zone records returned error: %v", err)
+	}
+
+	want := []ZoneRecord{{ID: 42, Rtype: "A", Ipv4: "127.0.0.1", TTL: 1800, ZoneID: 13}}
+	if !reflect.DeepEqual(zoneRecords, want) {
+		t.Errorf("Zone records returned %+v, want %+v", zoneRecords, want)
+	}
+}
+
 // func TestZoneRecord_ZoneRecord(t *testing.T) {
 // 	setup()
 // 	defer teardown()
@@ -64,19 +69,19 @@ func TestZoneRecord_zonerecordPath(t *testing.T) {
 // 	}
 // }
 //
-// func TestZoneRecord_Delete(t *testing.T) {
-// 	setup()
-// 	defer teardown()
-//
-// 	mux.HandleFunc("/v1/zones/13/records/42/", func(w http.ResponseWriter, r *http.Request) {
-// 		testMethod(t, r, "DELETE")
-// 		w.WriteHeader(http.StatusNoContent)
-// 	})
-//
-// 	zoneRecord := ZoneRecord{ID: 42, ZoneId: 13}
-// 	err := zoneRecord.Delete(client)
-//
-// 	if err != nil {
-// 		t.Errorf("Delete returned error: %v", err)
-// 	}
-// }
+func TestZoneRecord_Delete(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/v1/zones/13/records/42/", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, "DELETE")
+		w.WriteHeader(http.StatusNoContent)
+	})
+
+	zoneRecord := ZoneRecord{ID: 42, ZoneID: 13}
+	err := zoneRecord.Delete(client)
+
+	if err != nil {
+		t.Errorf("Delete returned error: %v", err)
+	}
+}

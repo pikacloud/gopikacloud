@@ -8,6 +8,7 @@ import (
 // ZoneRecord definition
 type ZoneRecord struct {
 	ID       int    `json:"id,omitempty"`
+	ZoneID   int    `json:"zone,omitempty"`
 	Rtype    string `json:"rtype"`
 	Ipv4     string `json:"ipv4,omitempty"`
 	Ipv6     string `json:"ipv6,omitempty"`
@@ -58,15 +59,14 @@ func (client *Client) ZoneRecord(zone interface{}) ([]Zone, error) {
 	return zones, nil
 }
 
-// ZoneRecordDelete delete a zone record
-func (zone *Zone) ZoneRecordDelete(client *Client) error {
-
-	_, status, err := client.sendRequest("DELETE", zonePath(zone.ID), nil)
+// Delete a zone record
+func (zoneRecord *ZoneRecord) Delete(client *Client) error {
+	_, status, err := client.sendRequest("DELETE", zoneRecordPath(zoneRecord.ZoneID, zoneRecord), nil)
 	if err != nil {
 		return err
 	}
 	if status == 204 {
 		return nil
 	}
-	return errors.New("Failed to delete zone")
+	return errors.New("Failed to delete zone record")
 }
