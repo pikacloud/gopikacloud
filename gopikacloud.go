@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	defaultBaseURL = "http://localhost:8000/api/"
+	defaultBaseURL = "https://pikacloud.com/api/"
 	apiVersion     = "v1"
 )
 

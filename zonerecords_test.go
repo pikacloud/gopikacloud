@@ -10,13 +10,14 @@ import (
 func TestZoneRecord_zonerecordPath(t *testing.T) {
 	var pathTests = []struct {
 		zoneInput       interface{}
-		zoneRecordInput *ZoneRecord
+		zoneRecordInput interface{}
 		expected        string
 	}{
 		{13, nil, "zones/13/records/"},
 		{Zone{ID: 13}, nil, "zones/13/records/"},
-		{13, &ZoneRecord{ID: 42}, "zones/13/records/42/"},
-		{Zone{ID: 13}, &ZoneRecord{ID: 42}, "zones/13/records/42/"},
+		{13, 42, "zones/13/records/42/"},
+		{13, ZoneRecord{ID: 42}, "zones/13/records/42/"},
+		{Zone{ID: 13}, ZoneRecord{ID: 42}, "zones/13/records/42/"},
 	}
 
 	for _, pt := range pathTests {
@@ -48,27 +49,6 @@ func TestZoneRecord_ZoneRecords(t *testing.T) {
 	}
 }
 
-// func TestZoneRecord_ZoneRecord(t *testing.T) {
-// 	setup()
-// 	defer teardown()
-//
-// 	mux.HandleFunc("/v1/zones/13/records/42/", func(w http.ResponseWriter, r *http.Request) {
-// 		testMethod(t, r, "GET")
-// 		fmt.Fprint(w, `[{"id":13}]`)
-// 	})
-//
-// 	zone, err := client.Zone(42)
-//
-// 	if err != nil {
-// 		t.Errorf("Zone returned error: %v", err)
-// 	}
-//
-// 	want := []Zone{{ID: 42, DomainName: "example.com"}}
-// 	if !reflect.DeepEqual(zone, want) {
-// 		t.Errorf("Zone returned %+v, want %+v", zone, want)
-// 	}
-// }
-//
 func TestZoneRecord_Delete(t *testing.T) {
 	setup()
 	defer teardown()

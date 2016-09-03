@@ -33,10 +33,10 @@ func zoneRecordIdentifier(value interface{}) string {
 	return ""
 }
 
-func zoneRecordPath(zone interface{}, zonerecord *ZoneRecord) string {
+func zoneRecordPath(zone interface{}, zonerecord interface{}) string {
 	str := fmt.Sprintf("zones/%s/records/", zoneIdentifier(zone))
 	if zonerecord != nil {
-		str += fmt.Sprintf("%s/", zoneRecordIdentifier(*zonerecord))
+		str += fmt.Sprintf("%s/", zoneRecordIdentifier(zonerecord))
 	}
 	return str
 }
@@ -50,18 +50,9 @@ func (client *Client) ZoneRecords(zone interface{}) ([]ZoneRecord, error) {
 	return zoneRecords, nil
 }
 
-// ZoneRecord retrieve a specific zone record
-func (client *Client) ZoneRecord(zone interface{}) ([]Zone, error) {
-	zones := []Zone{}
-	if err := client.get(zonePath(zone), &zones); err != nil {
-		return []Zone{}, err
-	}
-	return zones, nil
-}
-
 // Delete a zone record
 func (zoneRecord *ZoneRecord) Delete(client *Client) error {
-	_, status, err := client.sendRequest("DELETE", zoneRecordPath(zoneRecord.ZoneID, zoneRecord), nil)
+	_, status, err := client.sendRequest("DELETE", zoneRecordPath(zoneRecord.ZoneID, zoneRecord.ID), nil)
 	if err != nil {
 		return err
 	}
