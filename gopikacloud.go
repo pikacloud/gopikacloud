@@ -6,6 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 const (
@@ -61,6 +62,68 @@ func (client *Client) delete(path string, val interface{}) error {
 	return nil
 }
 
+func (client *Client) postOrPut(method, path string, payload, val interface{}) (int, error) {
+	jsonPayload, err := json.Marshal(payload)
+	if err != nil {
+		return 0, err
+	}
+
+	body, status, err := client.sendRequest(method, path, strings.NewReader(string(jsonPayload)))
+	if err != nil {
+		return 0, err
+	}
+
+	if err = json.Unmarshal([]byte(body), &val); err != nil {
+		return 0, err
+	}
+
+	return status, nil
+}
+
+func (client *Client) put(path string, payload, val interface{}) (int, error) {
+	return client.postOrPut("PUT", path, payload, val)
+}
+
+func (client *Client) post(path string, payload, val interface{}) (int, error) {
+	return client.postOrPut("POST", path, payload, val)
+}
+
+// A Response represents an API response.
+type Response struct {
+	// HTTP response
+	HTTPResponse *http.Response
+}
+
+// An ErrorResponse represents an API response that generated an error.
+type ErrorResponse struct {
+	Response
+	// human-readable message
+	Detail string `json:"detail"`
+}
+
+// Error implements the error interface.
+func (r *ErrorResponse) Error() string {
+	return fmt.Sprintf("%v %v: %v %v",
+		r.HTTPResponse.Request.Method, r.HTTPResponse.Request.URL,
+		r.HTTPResponse.StatusCode, r.Detail)
+}
+
+// CheckResponse checks the API response for errors, and returns them if present.
+func CheckResponse(resp *http.Response) error {
+	if code := resp.StatusCode; 200 <= code && code <= 299 {
+		return nil
+	}
+
+	errorResponse := &ErrorResponse{}
+	errorResponse.HTTPResponse = resp
+	err := json.NewDecoder(resp.Body).Decode(errorResponse)
+	if err != nil {
+		return err
+	}
+
+	return errorResponse
+}
+
 func (client *Client) sendRequest(method, path string, body io.Reader) (string, int, error) {
 	req, err := client.makeRequest(method, path, body)
 	if err != nil {
@@ -72,6 +135,11 @@ func (client *Client) sendRequest(method, path string, body io.Reader) (string, 
 		return "", 0, err
 	}
 	defer resp.Body.Close()
+
+	err = CheckResponse(resp)
+	if err != nil {
+		return "", resp.StatusCode, err
+	}
 
 	responseBytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {

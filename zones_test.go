@@ -14,6 +14,7 @@ func TestZone_zonePath(t *testing.T) {
 	}{
 		{nil, "zones/"},
 		{42, "zones/42/"},
+		{"42", "zones/42/"},
 		{Zone{ID: 64}, "zones/64/"},
 	}
 
@@ -52,7 +53,7 @@ func TestZone_Zone(t *testing.T) {
 
 	mux.HandleFunc("/v1/zones/42/", func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "GET")
-		fmt.Fprint(w, `[{"id":42, "domain_name":"example.com"}]`)
+		fmt.Fprint(w, `{"id":42, "domain_name":"example.com"}`)
 	})
 
 	zone, err := client.Zone(42)
@@ -61,9 +62,37 @@ func TestZone_Zone(t *testing.T) {
 		t.Errorf("Zone returned error: %v", err)
 	}
 
-	want := []Zone{{ID: 42, DomainName: "example.com"}}
+	want := Zone{ID: 42, DomainName: "example.com"}
 	if !reflect.DeepEqual(zone, want) {
 		t.Errorf("Zone returned %+v, want %+v", zone, want)
+	}
+}
+
+func TestZone_Create(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/v1/zones/", func(w http.ResponseWriter, r *http.Request) {
+		want := make(map[string]interface{})
+		want = map[string]interface{}{"domain_name": "example.com"}
+
+		testMethod(t, r, "POST")
+		w.WriteHeader(http.StatusCreated)
+		testRequestJSON(t, r, want)
+
+		fmt.Fprintf(w, `{"id":42, "domain_name":"example.com"}`)
+	})
+
+	zone := Zone{DomainName: "example.com"}
+	res, err := client.CreateZone(zone)
+
+	if err != nil {
+		t.Errorf("Create zone returned error: %v", err)
+	}
+
+	want := Zone{ID: 42, DomainName: "example.com"}
+	if !reflect.DeepEqual(res, want) {
+		t.Errorf("Create zone returned %+v, want %+v", res, want)
 	}
 }
 

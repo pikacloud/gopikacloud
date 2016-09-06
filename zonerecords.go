@@ -18,11 +18,6 @@ type ZoneRecord struct {
 	TTL      int    `json:"ttl,omitempty"`
 }
 
-// ZoneRecordsWrapper wraps ZoneRecord
-type ZoneRecordsWrapper struct {
-	ZoneRecord []ZoneRecord
-}
-
 func zoneRecordIdentifier(value interface{}) string {
 	switch value := value.(type) {
 	case int:

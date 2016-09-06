@@ -3,6 +3,7 @@ package gopikacloud
 import (
 	"errors"
 	"fmt"
+	"strconv"
 )
 
 // Zone definition
@@ -13,15 +14,16 @@ type Zone struct {
 	Serial     int    `json:"serial,omitempty"`
 }
 
-// ZoneWrapper wraps Zone
-type ZoneWrapper struct {
-	Zone []Zone
-}
-
 func zoneIdentifier(value interface{}) string {
 	switch value := value.(type) {
 	case int:
 		return fmt.Sprintf("%d", value)
+	case string:
+		valueInt, err := strconv.Atoi(value)
+		if err != nil {
+			return ""
+		}
+		return fmt.Sprintf("%d", valueInt)
 	case Zone:
 		return fmt.Sprintf("%d", value.ID)
 	}
@@ -45,12 +47,25 @@ func (client *Client) Zones() ([]Zone, error) {
 }
 
 // Zone retrieve a specific zone
-func (client *Client) Zone(zone interface{}) ([]Zone, error) {
-	zones := []Zone{}
-	if err := client.get(zonePath(zone), &zones); err != nil {
-		return []Zone{}, err
+func (client *Client) Zone(zone interface{}) (Zone, error) {
+	res := Zone{}
+	if err := client.get(zonePath(zone), &res); err != nil {
+		return Zone{}, err
 	}
-	return zones, nil
+	return res, nil
+}
+
+// CreateZone create a zone
+func (client *Client) CreateZone(zone interface{}) (Zone, error) {
+	res := Zone{}
+	status, err := client.post(zonePath(nil), zone, &res)
+	if err != nil {
+		return Zone{}, err
+	}
+	if status == 201 {
+		return res, nil
+	}
+	return res, errors.New("Failed to create zone")
 }
 
 // Delete a Zone
