@@ -45,6 +45,15 @@ func (client *Client) ZoneRecords(zone interface{}) ([]ZoneRecord, error) {
 	return zoneRecords, nil
 }
 
+// ZoneRecord fetch a single DNS zone record
+func (client *Client) ZoneRecord(zone interface{}, zonerecord interface{}) (ZoneRecord, error) {
+	zoneRecord := ZoneRecord{}
+	if err := client.get(zoneRecordPath(zone, zonerecord), &zoneRecord); err != nil {
+		return ZoneRecord{}, err
+	}
+	return zoneRecord, nil
+}
+
 // Delete a zone record
 func (zoneRecord *ZoneRecord) Delete(client *Client) error {
 	_, status, err := client.sendRequest("DELETE", zoneRecordPath(zoneRecord.ZoneID, zoneRecord.ID), nil)

@@ -49,6 +49,27 @@ func TestZoneRecord_ZoneRecords(t *testing.T) {
 	}
 }
 
+func TestZone_ZoneRecord(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/v1/zones/13/records/42/", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, "GET")
+		fmt.Fprint(w, `{"id":42, "zone":13, "rtype": "A", "ipv4": "127.0.0.1", "ttl": 1800}`)
+	})
+
+	zoneRecord, err := client.ZoneRecord(13, 42)
+
+	if err != nil {
+		t.Errorf("Zone record returned error: %v", err)
+	}
+
+	want := ZoneRecord{ID: 42, Rtype: "A", Ipv4: "127.0.0.1", TTL: 1800, ZoneID: 13}
+	if !reflect.DeepEqual(zoneRecord, want) {
+		t.Errorf("Zone record returned %+v, want %+v", zoneRecord, want)
+	}
+}
+
 func TestZoneRecord_Delete(t *testing.T) {
 	setup()
 	defer teardown()
