@@ -16,6 +16,7 @@ type ZoneRecord struct {
 	Hostname string `json:"hostname,omitempty"`
 	Content  string `json:"content,omitempty"`
 	TTL      int    `json:"ttl,omitempty"`
+	Priority int    `json:"priority,omitempty"`
 }
 
 func zoneRecordIdentifier(value interface{}) string {
