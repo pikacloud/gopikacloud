@@ -55,6 +55,19 @@ func (client *Client) ZoneRecord(zone interface{}, zonerecord interface{}) (Zone
 	return zoneRecord, nil
 }
 
+// CreateZoneRecord create a DNS zone record
+func (client *Client) CreateZoneRecord(zone interface{}, zonerecord interface{}) (ZoneRecord, error) {
+	res := ZoneRecord{}
+	status, err := client.post(zoneRecordPath(zone, nil), zonerecord, &res)
+	if err != nil {
+		return ZoneRecord{}, err
+	}
+	if status == 201 {
+		return res, nil
+	}
+	return res, errors.New("Failed to create zone record")
+}
+
 // Delete a zone record
 func (zoneRecord *ZoneRecord) Delete(client *Client) error {
 	_, status, err := client.sendRequest("DELETE", zoneRecordPath(zoneRecord.ZoneID, zoneRecord.ID), nil)
