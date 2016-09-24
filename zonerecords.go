@@ -3,6 +3,7 @@ package gopikacloud
 import (
 	"errors"
 	"fmt"
+	"strconv"
 )
 
 // ZoneRecord definition
@@ -25,7 +26,14 @@ func zoneRecordIdentifier(value interface{}) string {
 		return fmt.Sprintf("%d", value)
 	case ZoneRecord:
 		return fmt.Sprintf("%d", value.ID)
+	case string:
+		valueInt, err := strconv.Atoi(value)
+		if err != nil {
+			return ""
+		}
+		return fmt.Sprintf("%d", valueInt)
 	}
+
 	return ""
 }
 
