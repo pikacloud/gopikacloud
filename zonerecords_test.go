@@ -13,11 +13,11 @@ func TestZoneRecord_zonerecordPath(t *testing.T) {
 		zoneRecordInput interface{}
 		expected        string
 	}{
-		{13, nil, "zones/13/records/"},
-		{Zone{ID: 13}, nil, "zones/13/records/"},
-		{13, 42, "zones/13/records/42/"},
-		{13, ZoneRecord{ID: 42}, "zones/13/records/42/"},
-		{Zone{ID: 13}, ZoneRecord{ID: 42}, "zones/13/records/42/"},
+		{13, nil, "dns/zones/13/records/"},
+		{Zone{ID: 13}, nil, "dns/zones/13/records/"},
+		{13, 42, "dns/zones/13/records/42/"},
+		{13, ZoneRecord{ID: 42}, "dns/zones/13/records/42/"},
+		{Zone{ID: 13}, ZoneRecord{ID: 42}, "dns/zones/13/records/42/"},
 	}
 
 	for _, pt := range pathTests {
@@ -32,7 +32,7 @@ func TestZoneRecord_ZoneRecords(t *testing.T) {
 	setup()
 	defer teardown()
 
-	mux.HandleFunc("/v1/zones/13/records/", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/v1/dns/zones/13/records/", func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "GET")
 		fmt.Fprint(w, `[{"id": 42, "zone": 13, "rtype": "A", "ipv4": "127.0.0.1", "ttl": 1800}]`)
 	})
@@ -53,7 +53,7 @@ func TestZone_ZoneRecord(t *testing.T) {
 	setup()
 	defer teardown()
 
-	mux.HandleFunc("/v1/zones/13/records/42/", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/v1/dns/zones/13/records/42/", func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "GET")
 		fmt.Fprint(w, `{"id":42, "zone": 13, "rtype": "A", "ipv4": "127.0.0.1", "ttl": 1800}`)
 	})
@@ -74,7 +74,7 @@ func TestZoneRecord_Create(t *testing.T) {
 	setup()
 	defer teardown()
 
-	mux.HandleFunc("/v1/zones/13/records/", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/v1/dns/zones/13/records/", func(w http.ResponseWriter, r *http.Request) {
 		want := make(map[string]interface{})
 		want = map[string]interface{}{"rtype": "A", "ipv4": "127.0.0.1"}
 
@@ -102,7 +102,7 @@ func TestZoneRecord_Delete(t *testing.T) {
 	setup()
 	defer teardown()
 
-	mux.HandleFunc("/v1/zones/13/records/42/", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/v1/dns/zones/13/records/42/", func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "DELETE")
 		w.WriteHeader(http.StatusNoContent)
 	})

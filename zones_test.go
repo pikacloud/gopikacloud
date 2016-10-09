@@ -12,10 +12,10 @@ func TestZone_zonePath(t *testing.T) {
 		input    interface{}
 		expected string
 	}{
-		{nil, "zones/"},
-		{42, "zones/42/"},
-		{"42", "zones/42/"},
-		{Zone{ID: 64}, "zones/64/"},
+		{nil, "dns/zones/"},
+		{42, "dns/zones/42/"},
+		{"42", "dns/zones/42/"},
+		{Zone{ID: 64}, "dns/zones/64/"},
 	}
 
 	for _, pt := range pathTests {
@@ -30,7 +30,7 @@ func TestZone_Zones(t *testing.T) {
 	setup()
 	defer teardown()
 
-	mux.HandleFunc("/v1/zones/", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/v1/dns/zones/", func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "GET")
 		fmt.Fprint(w, `[{"id": 1, "domain_name": "foo.com", "serial": 10, "created_at": "2016-08-23T21:59:14.000251Z"}]`)
 	})
@@ -51,7 +51,7 @@ func TestZone_Zone(t *testing.T) {
 	setup()
 	defer teardown()
 
-	mux.HandleFunc("/v1/zones/42/", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/v1/dns/zones/42/", func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "GET")
 		fmt.Fprint(w, `{"id":42, "domain_name":"example.com"}`)
 	})
@@ -72,7 +72,7 @@ func TestZone_Create(t *testing.T) {
 	setup()
 	defer teardown()
 
-	mux.HandleFunc("/v1/zones/", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/v1/dns/zones/", func(w http.ResponseWriter, r *http.Request) {
 		want := make(map[string]interface{})
 		want = map[string]interface{}{"domain_name": "example.com"}
 
@@ -100,7 +100,7 @@ func TestZone_Delete(t *testing.T) {
 	setup()
 	defer teardown()
 
-	mux.HandleFunc("/v1/zones/42/", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/v1/dns/zones/42/", func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "DELETE")
 		w.WriteHeader(http.StatusNoContent)
 	})

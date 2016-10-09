@@ -32,9 +32,9 @@ func zoneIdentifier(value interface{}) string {
 
 func zonePath(zone interface{}) string {
 	if zone != nil {
-		return fmt.Sprintf("zones/%s/", zoneIdentifier(zone))
+		return fmt.Sprintf("dns/zones/%s/", zoneIdentifier(zone))
 	}
-	return "zones/"
+	return "dns/zones/"
 }
 
 // Zones lists DNS zones you own

@@ -38,7 +38,7 @@ func zoneRecordIdentifier(value interface{}) string {
 }
 
 func zoneRecordPath(zone interface{}, zonerecord interface{}) string {
-	str := fmt.Sprintf("zones/%s/records/", zoneIdentifier(zone))
+	str := fmt.Sprintf("dns/zones/%s/records/", zoneIdentifier(zone))
 	if zonerecord != nil {
 		str += fmt.Sprintf("%s/", zoneRecordIdentifier(zonerecord))
 	}
