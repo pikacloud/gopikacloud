@@ -40,7 +40,7 @@ func zonePath(zone interface{}) string {
 // Zones lists DNS zones you own
 func (client *Client) Zones() ([]Zone, error) {
 	zones := []Zone{}
-	if err := client.get(zonePath(nil), &zones); err != nil {
+	if err := client.Get(zonePath(nil), &zones); err != nil {
 		return []Zone{}, err
 	}
 	return zones, nil
@@ -49,7 +49,7 @@ func (client *Client) Zones() ([]Zone, error) {
 // Zone retrieve a specific zone
 func (client *Client) Zone(zone interface{}) (Zone, error) {
 	res := Zone{}
-	if err := client.get(zonePath(zone), &res); err != nil {
+	if err := client.Get(zonePath(zone), &res); err != nil {
 		return Zone{}, err
 	}
 	return res, nil
@@ -58,7 +58,7 @@ func (client *Client) Zone(zone interface{}) (Zone, error) {
 // CreateZone create a zone
 func (client *Client) CreateZone(zone interface{}) (Zone, error) {
 	res := Zone{}
-	status, err := client.post(zonePath(nil), zone, &res)
+	status, err := client.Post(zonePath(nil), zone, &res)
 	if err != nil {
 		return Zone{}, err
 	}

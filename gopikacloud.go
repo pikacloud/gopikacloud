@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
+	"time"
 )
 
 const (
@@ -14,19 +15,8 @@ const (
 	apiVersion     = "v1"
 )
 
-// Client manages communication with Pikacloud API.
-type Client struct {
-	// API Token for authenticating
-	APIToken string
-	// HTTP client used to communicate with the Pikacloud API.
-	HTTPClient *http.Client
-	// Base URL for API requests.
-	BaseURL string
-}
-
-// NewClient users
-func NewClient(apiToken string) *Client {
-	return &Client{APIToken: apiToken, HTTPClient: &http.Client{}, BaseURL: defaultBaseURL}
+var httpClient = &http.Client{
+	Timeout: time.Second * 10,
 }
 
 func (client *Client) makeRequest(method, path string, body io.Reader) (*http.Request, error) {
@@ -41,51 +31,19 @@ func (client *Client) makeRequest(method, path string, body io.Reader) (*http.Re
 	return req, nil
 }
 
-func (client *Client) get(path string, val interface{}) error {
-	body, _, err := client.sendRequest("GET", path, nil)
-	if err != nil {
-		return err
-	}
-
-	if err = json.Unmarshal([]byte(body), &val); err != nil {
-		return err
-	}
-
-	return nil
+// Client manages communication with Pikacloud API.
+type Client struct {
+	// API Token for authenticating
+	APIToken string
+	// HTTP client used to communicate with the Pikacloud API.
+	HTTPClient *http.Client
+	// Base URL for API requests.
+	BaseURL string
 }
 
-func (client *Client) delete(path string, val interface{}) error {
-	_, _, err := client.sendRequest("DELETE", path, nil)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (client *Client) postOrPut(method, path string, payload, val interface{}) (int, error) {
-	jsonPayload, err := json.Marshal(payload)
-	if err != nil {
-		return 0, err
-	}
-
-	body, status, err := client.sendRequest(method, path, strings.NewReader(string(jsonPayload)))
-	if err != nil {
-		return 0, err
-	}
-
-	if err = json.Unmarshal([]byte(body), &val); err != nil {
-		return 0, err
-	}
-
-	return status, nil
-}
-
-func (client *Client) put(path string, payload, val interface{}) (int, error) {
-	return client.postOrPut("PUT", path, payload, val)
-}
-
-func (client *Client) post(path string, payload, val interface{}) (int, error) {
-	return client.postOrPut("POST", path, payload, val)
+// NewClient agent
+func NewClient(apiToken string) *Client {
+	return &Client{APIToken: apiToken, HTTPClient: httpClient, BaseURL: defaultBaseURL}
 }
 
 // A Response represents an API response.
@@ -113,7 +71,6 @@ func CheckResponse(resp *http.Response) error {
 	if code := resp.StatusCode; 200 <= code && code <= 299 {
 		return nil
 	}
-
 	errorResponse := &ErrorResponse{}
 	errorResponse.HTTPResponse = resp
 	err := json.NewDecoder(resp.Body).Decode(errorResponse)
@@ -147,4 +104,52 @@ func (client *Client) sendRequest(method, path string, body io.Reader) (string, 
 	}
 
 	return string(responseBytes), resp.StatusCode, nil
+}
+
+// Get method
+func (client *Client) Get(path string, val interface{}) error {
+	body, _, err := client.sendRequest("GET", path, nil)
+	if err != nil {
+		return err
+	}
+
+	if err = json.Unmarshal([]byte(body), &val); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// PostOrPutOrDelete method
+func (client *Client) PostOrPutOrDelete(method, path string, payload, val interface{}) (int, error) {
+	jsonPayload, err := json.Marshal(payload)
+	if err != nil {
+		return 0, err
+	}
+
+	body, status, err := client.sendRequest(method, path, strings.NewReader(string(jsonPayload)))
+	if err != nil {
+		return 0, err
+	}
+
+	if err = json.Unmarshal([]byte(body), &val); err != nil {
+		return 0, err
+	}
+
+	return status, nil
+}
+
+// Put meta method
+func (client *Client) Put(path string, payload, val interface{}) (int, error) {
+	return client.PostOrPutOrDelete("PUT", path, payload, val)
+}
+
+// Post meta method
+func (client *Client) Post(path string, payload, val interface{}) (int, error) {
+	return client.PostOrPutOrDelete("POST", path, payload, val)
+}
+
+// Delete meta method
+func (client *Client) Delete(path string, payload, val interface{}) (int, error) {
+	return client.PostOrPutOrDelete("DELETE", path, payload, val)
 }

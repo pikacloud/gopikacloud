@@ -48,7 +48,7 @@ func zoneRecordPath(zone interface{}, zonerecord interface{}) string {
 // ZoneRecords lists DNS zone Records of a specific zone
 func (client *Client) ZoneRecords(zone interface{}) ([]ZoneRecord, error) {
 	zoneRecords := []ZoneRecord{}
-	if err := client.get(zoneRecordPath(zone, nil), &zoneRecords); err != nil {
+	if err := client.Get(zoneRecordPath(zone, nil), &zoneRecords); err != nil {
 		return []ZoneRecord{}, err
 	}
 	return zoneRecords, nil
@@ -57,7 +57,7 @@ func (client *Client) ZoneRecords(zone interface{}) ([]ZoneRecord, error) {
 // ZoneRecord fetch a single DNS zone record
 func (client *Client) ZoneRecord(zone interface{}, zonerecord interface{}) (ZoneRecord, error) {
 	zoneRecord := ZoneRecord{}
-	if err := client.get(zoneRecordPath(zone, zonerecord), &zoneRecord); err != nil {
+	if err := client.Get(zoneRecordPath(zone, zonerecord), &zoneRecord); err != nil {
 		return ZoneRecord{}, err
 	}
 	return zoneRecord, nil
@@ -66,7 +66,7 @@ func (client *Client) ZoneRecord(zone interface{}, zonerecord interface{}) (Zone
 // CreateZoneRecord create a DNS zone record
 func (client *Client) CreateZoneRecord(zone interface{}, zonerecord interface{}) (ZoneRecord, error) {
 	res := ZoneRecord{}
-	status, err := client.post(zoneRecordPath(zone, nil), zonerecord, &res)
+	status, err := client.Post(zoneRecordPath(zone, nil), zonerecord, &res)
 	if err != nil {
 		return ZoneRecord{}, err
 	}

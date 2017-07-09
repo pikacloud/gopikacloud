@@ -40,7 +40,7 @@ func instancePath(instance interface{}) string {
 // Instances lists load balancers you own
 func (client *Client) Instances() ([]Instance, error) {
 	instances := []Instance{}
-	if err := client.get(instancePath(nil), &instances); err != nil {
+	if err := client.Get(instancePath(nil), &instances); err != nil {
 		return []Instance{}, err
 	}
 	return instances, nil
@@ -49,7 +49,7 @@ func (client *Client) Instances() ([]Instance, error) {
 // Instance retrieve a specific instance
 func (client *Client) Instance(instance interface{}) (Instance, error) {
 	res := Instance{}
-	if err := client.get(instancePath(instance), &res); err != nil {
+	if err := client.Get(instancePath(instance), &res); err != nil {
 		return Instance{}, err
 	}
 	return res, nil
@@ -58,7 +58,7 @@ func (client *Client) Instance(instance interface{}) (Instance, error) {
 // CreateInstance create a instance
 func (client *Client) CreateInstance(instance interface{}) (Instance, error) {
 	res := Instance{}
-	status, err := client.post(instancePath(nil), instance, &res)
+	status, err := client.Post(instancePath(nil), instance, &res)
 	if err != nil {
 		return Instance{}, err
 	}
