@@ -7,12 +7,12 @@ import (
 
 // Terminal definition
 type Terminal struct {
-	Aid      string `json:"aid"`
-	Tid      string `json:"tid"`
+	Aid      string `json:"aid,omitempty"`
+	Tid      string `json:"tid,omitempty"`
 	Cid      string `json:"cid"`
-	Token    string `json:"token"`
-	LastPing int    `json:"last_ping"`
-	Ready    bool
+	Token    string `json:"token,omitempty"`
+	LastPing int    `json:"last_ping,omitempty"`
+	Ready    bool   `json:"ready,omitempty"`
 }
 
 func terminalPath(aid string, tid string) string {
@@ -51,4 +51,16 @@ func (client *Client) CreateTerminal(aid string, terminal interface{}) (Terminal
 		return res, nil
 	}
 	return res, errors.New("Failed to create terminal")
+}
+
+// Delete a terminal
+func (terminal *Terminal) Delete(client *Client) error {
+	_, status, err := client.sendRequest("DELETE", terminalPath(terminal.Aid, terminal.Tid), nil)
+	if err != nil {
+		return err
+	}
+	if status == 204 {
+		return nil
+	}
+	return errors.New("Failed to delete terminal")
 }
