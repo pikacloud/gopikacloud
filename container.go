@@ -6,4 +6,5 @@ type ContainerConfig struct {
 	Name       string `json:"name"`
 	Image      string `json:"image"`
 	AlwaysPull bool   `json:"always_pull"`
+	StreamLogs bool   `json:"stream_logs"`
 }
