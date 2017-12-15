@@ -16,7 +16,7 @@ func TestUser_SuperNetwork(t *testing.T) {
 		fmt.Fprint(w, `{"user":42, "key": "foobar"}`)
 	})
 
-	user, err := client.SuperNetwork()
+	sn, err := client.SuperNetwork()
 
 	if err != nil {
 		t.Errorf("SuperNetwork returned error: %v", err)
@@ -24,6 +24,6 @@ func TestUser_SuperNetwork(t *testing.T) {
 
 	want := SuperNetwork{User: 42, Key: "foobar"}
 	if !reflect.DeepEqual(user, want) {
-		t.Errorf("User returned %+v, want %+v", user, want)
+		t.Errorf("SuperNetwork returned %+v, want %+v", sn, want)
 	}
 }
