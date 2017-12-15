@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestUser_SuperNetwork(t *testing.T) {
+func TestSuperNetwork_SuperNetwork(t *testing.T) {
 	setup()
 	defer teardown()
 
@@ -23,7 +23,7 @@ func TestUser_SuperNetwork(t *testing.T) {
 	}
 
 	want := SuperNetwork{User: 42, Key: "foobar"}
-	if !reflect.DeepEqual(user, want) {
+	if !reflect.DeepEqual(sn, want) {
 		t.Errorf("SuperNetwork returned %+v, want %+v", sn, want)
 	}
 }
