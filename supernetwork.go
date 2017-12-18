@@ -9,7 +9,7 @@ type SuperNetwork struct {
 }
 
 // SuperNet returns current supernetwork
-func (client *Client) SuperNet(aid string) (SuperNetwork, error) {
+func (client *Client) SuperNetwork(aid string) (SuperNetwork, error) {
 	aidURI := fmt.Sprintf("run/supernetwork/?aid=%s", aid)
 	sn := SuperNetwork{}
 	if err := client.Get(aidURI, &sn); err != nil {

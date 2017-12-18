@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestSuperNetwork_SuperNet(t *testing.T) {
+func TestSuperNetwork_SuperNetwork(t *testing.T) {
 	setup()
 	defer teardown()
 
@@ -16,7 +16,7 @@ func TestSuperNetwork_SuperNet(t *testing.T) {
 		fmt.Fprint(w, `{"user":42, "key": "foobar"}`)
 	})
 
-	sn, err := client.SuperNet("tata")
+	sn, err := client.SuperNetwork("tata")
 
 	if err != nil {
 		t.Errorf("SuperNetwork returned error: %v", err)
