@@ -16,7 +16,7 @@ func TestSuperNetwork_SuperNetwork(t *testing.T) {
 		fmt.Fprint(w, `{"user":42, "key": "foobar"}`)
 	})
 
-	sn, err := client.SuperNetwork()
+	sn, err := client.SuperNetwork("tata")
 
 	if err != nil {
 		t.Errorf("SuperNetwork returned error: %v", err)

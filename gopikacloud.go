@@ -116,7 +116,6 @@ func (client *Client) Get(path string, val interface{}) error {
 	if err = json.Unmarshal([]byte(body), &val); err != nil {
 		return err
 	}
-
 	return nil
 }
 
