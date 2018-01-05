@@ -2,17 +2,18 @@ package gopikacloud
 
 import "fmt"
 
-// SuperNetwok defines a pikacloud supernetwork
+// SuperNetwork defines a pikacloud supernetwork
 type SuperNetwork struct {
-	User int64  `json:"user"`
-	Key  string `json:"key"`
+	Key       string `json:"key"`
+	Cidr      string `json:"cidr"`
+	DNSDomain string `json:"dns_domain"`
 }
 
-// SuperNet returns current supernetwork
+// SuperNetwork returns current supernetwork
 func (client *Client) SuperNetwork(aid string) (SuperNetwork, error) {
-	aidURI := fmt.Sprintf("run/supernetwork/?aid=%s", aid)
 	sn := SuperNetwork{}
-	if err := client.Get(aidURI, &sn); err != nil {
+	uri := fmt.Sprintf("run/agents/%s/supernetwork/", aid)
+	if err := client.Get(uri, &sn); err != nil {
 		return SuperNetwork{}, err
 	}
 	return sn, nil

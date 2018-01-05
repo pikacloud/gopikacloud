@@ -75,8 +75,7 @@ func TestZoneRecord_Create(t *testing.T) {
 	defer teardown()
 
 	mux.HandleFunc("/v1/dns/zones/13/records/", func(w http.ResponseWriter, r *http.Request) {
-		want := make(map[string]interface{})
-		want = map[string]interface{}{"rtype": "A", "ipv4": "127.0.0.1"}
+		want := map[string]interface{}{"rtype": "A", "ipv4": "127.0.0.1"}
 
 		testMethod(t, r, "POST")
 		w.WriteHeader(http.StatusCreated)

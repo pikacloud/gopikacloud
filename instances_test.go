@@ -73,8 +73,7 @@ func TestInstance_Create(t *testing.T) {
 	defer teardown()
 
 	mux.HandleFunc("/v1/loadbalancers/instances/", func(w http.ResponseWriter, r *http.Request) {
-		want := make(map[string]interface{})
-		want = map[string]interface{}{"region": "lon1", "sticky": false}
+		want := map[string]interface{}{"region": "lon1", "sticky": false}
 
 		testMethod(t, r, "POST")
 		w.WriteHeader(http.StatusCreated)

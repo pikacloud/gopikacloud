@@ -73,8 +73,7 @@ func TestZone_Create(t *testing.T) {
 	defer teardown()
 
 	mux.HandleFunc("/v1/dns/zones/", func(w http.ResponseWriter, r *http.Request) {
-		want := make(map[string]interface{})
-		want = map[string]interface{}{"domain_name": "example.com"}
+		want := map[string]interface{}{"domain_name": "example.com"}
 
 		testMethod(t, r, "POST")
 		w.WriteHeader(http.StatusCreated)

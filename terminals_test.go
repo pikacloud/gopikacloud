@@ -47,8 +47,7 @@ func TestTerminal_Create(t *testing.T) {
 	defer teardown()
 
 	mux.HandleFunc("/v1/run/agents/foo/docker/terminals/", func(w http.ResponseWriter, r *http.Request) {
-		want := make(map[string]interface{})
-		want = map[string]interface{}{"cid": "xyz"}
+		want := map[string]interface{}{"cid": "xyz"}
 
 		testMethod(t, r, "POST")
 		w.WriteHeader(http.StatusCreated)
